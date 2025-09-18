@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Environs.org - Home</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: url('homebg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #2e7d32;
+      text-align: center;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 72px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 400;
+      color: #f1f1f1;
+      margin-bottom: 50px;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    }
+
+    button {
+      background: linear-gradient(135deg, #66bb6a, #43a047);
+      color: white;
+      border: none;
+      padding: 16px 50px;
+      font-size: 22px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #57a55c, #2e7d32);
+      transform: scale(1.07);
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 25px;
+      width: 100%;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #f1f1f1;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    }
+
+    .footer a {
+      color: #f1f1f1;
+      text-decoration: none;
+      border-bottom: 1px dotted #ccc;
+    }
+
+    .footer a:hover {
+      color: #ffeb3b;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Environs.org</h1>
+  <h2>Exploring sustainability, one step at a time 🌍</h2>
+  <button onclick="window.location.href='stud_login_page.html'">Login</button>
+
+  <div class="footer">
+    Partnered With <a href="https://chennai.vit.ac.in/" target="_blank">Vellore Institute of Technology, Chennai</a>
+  </div>
+</body>
+</html>
