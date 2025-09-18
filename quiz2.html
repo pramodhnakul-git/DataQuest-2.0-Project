@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Climate Change Quiz & Matching Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #00695c;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    #quiz, #game-section {
+      max-width: 700px;
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .question {
+      margin-bottom: 25px;
+      padding: 25px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .question p {
+      margin-bottom: 25px;
+      font-weight: bold;
+      font-size: 24px;
+      color: #004d40;
+    }
+
+    .option {
+      display: block;
+      margin: 15px auto;
+      padding: 15px 20px;
+      width: 85%;
+      max-width: 500px;
+      border: 2px solid #4db6ac;
+      border-radius: 10px;
+      background: #e0f2f1;
+      color: #004d40;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option:hover {
+      background: #4db6ac;
+      color: white;
+    }
+
+    .option.selected {
+      background: #00897b;
+      color: white;
+      border-color: #00695c;
+    }
+
+    button {
+      background: #00897b;
+      border: none;
+      color: white;
+      padding: 14px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 20px;
+      margin-top: 20px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #00695c;
+    }
+
+    #score {
+      font-size: 20px;
+      font-weight: bold;
+      color: #004d40;
+      margin-bottom: 15px;
+    }
+
+    #game {
+      display: grid;
+      grid-template-columns: repeat(4, 150px);
+      grid-gap: 15px;
+      margin: 20px;
+    }
+
+    .card {
+      width: 150px;
+      height: 80px;
+      background: #4db6ac;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: 8px;
+      user-select: none;
+      position: relative;
+      transform: perspective(600px) rotateY(0deg);
+      transition: transform 0.4s;
+    }
+
+    .card.flipped {
+      transform: perspective(600px) rotateY(180deg);
+      background: #80cbc4;
+    }
+
+    .card.matched {
+      background: #a5d6a7;
+      cursor: default;
+    }
+
+    .card .front, .card .back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .card .back {
+      transform: perspective(600px) rotateY(180deg);
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #004d40;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🌍 Climate Change Quiz</h2>
+  <div id="quiz"></div>
+  <button id="nextBtn">Next</button>
+
+  <div id="game-section" style="display:none;">
+    <h2>♻️ Climate Change Matching Game</h2>
+    <div id="score">Score: 0</div>
+    <div id="game"></div>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const quizQuestions = [
+      {
+        q: "What gas is the biggest contributor to climate change?",
+        options: ["Oxygen", "Carbon Dioxide", "Nitrogen", "Helium"],
+        answer: "Carbon Dioxide"
+      },
+      {
+        q: "Which human activity contributes most to greenhouse gases?",
+        options: ["Agriculture", "Transportation", "Burning Fossil Fuels", "Fishing"],
+        answer: "Burning Fossil Fuels"
+      },
+      {
+        q: "What renewable energy source uses moving air?",
+        options: ["Solar Power", "Wind Power", "Hydropower", "Geothermal"],
+        answer: "Wind Power"
+      },
+      {
+        q: "What happens when ice caps melt?",
+        options: ["Sea levels rise", "Earth cools down", "More forests grow", "Oceans dry up"],
+        answer: "Sea levels rise"
+      },
+      {
+        q: "What can people do to reduce their carbon footprint?",
+        options: ["Plant trees", "Recycle", "Use renewable energy", "All of the above"],
+        answer: "All of the above"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let quizScore = 0;
+    let selectedAnswer = null;
+    const quizDiv = document.getElementById("quiz");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function showQuestion(index) {
+      const qObj = quizQuestions[index];
+      quizDiv.innerHTML = `
+        <div class="question">
+          <p>${index + 1}. ${qObj.q}</p>
+          ${qObj.options.map(opt => `
+            <div class="option" data-value="${opt}">${opt}</div>
+          `).join("")}
+        </div>
+      `;
+      selectedAnswer = null;
+
+      document.querySelectorAll(".option").forEach(opt => {
+        opt.addEventListener("click", () => {
+          document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+          opt.classList.add("selected");
+          selectedAnswer = opt.dataset.value;
+        });
+      });
+
+      nextBtn.textContent = index === quizQuestions.length - 1 ? "Finish Quiz" : "Next";
+    }
+
+    showQuestion(currentQuestion);
+
+    nextBtn.addEventListener("click", () => {
+      if (!selectedAnswer) {
+        alert("Please select an answer.");
+        return;
+      }
+      if (selectedAnswer === quizQuestions[currentQuestion].answer) {
+        quizScore++;
+      }
+
+      currentQuestion++;
+      if (currentQuestion < quizQuestions.length) {
+        showQuestion(currentQuestion);
+      } else {
+        alert("You scored " + quizScore + " out of " + quizQuestions.length);
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("game-section").style.display = "block";
+      }
+    });
+
+    const pairs = [
+      { term: "Greenhouse Gases", definition: "Traps heat in the atmosphere" },
+      { term: "Deforestation", definition: "Clearing forests which reduces CO₂ absorption" },
+      { term: "Renewable Energy", definition: "Energy from sources like sun, wind, water" },
+      { term: "Carbon Footprint", definition: "Total greenhouse gases emitted by a person or activity" },
+      { term: "Global Warming", definition: "Rise in Earth's average temperature" },
+      { term: "Melting Ice Caps", definition: "Polar ice reducing due to higher temperatures" },
+      { term: "Pollution", definition: "Harmful substances released into the environment" },
+      { term: "Climate Adaptation", definition: "Adjusting to effects of climate change" }
+    ];
+
+    const cardsData = [];
+    pairs.forEach((p, index) => {
+      cardsData.push({ id: index + "-term", content: p.term });
+      cardsData.push({ id: index + "-def", content: p.definition });
+    });
+
+    shuffle(cardsData);
+
+    const gameDiv = document.getElementById('game');
+    const scoreDisplay = document.getElementById('score');
+    const messageDisplay = document.getElementById('message');
+
+    let firstCard = null;
+    let secondCard = null;
+    let lockBoard = false;
+    let matches = 0;
+    let score = 0;
+
+    cardsData.forEach(cardInfo => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.id = cardInfo.id;
+      card.innerHTML = `
+        <div class="front">${cardInfo.content}</div>
+        <div class="back">?</div>
+      `;
+      card.addEventListener('click', flipCard);
+      gameDiv.appendChild(card);
+    });
+
+    function flipCard(e) {
+      const card = e.currentTarget;
+      if (lockBoard || card.classList.contains('matched') || card === firstCard) return;
+
+      card.classList.add('flipped');
+
+      if (!firstCard) {
+        firstCard = card;
+        return;
+      }
+
+      secondCard = card;
+      lockBoard = true;
+
+      checkForMatch();
+    }
+
+    function checkForMatch() {
+      const id1 = firstCard.dataset.id;
+      const id2 = secondCard.dataset.id;
+      const [idx1, type1] = id1.split('-');
+      const [idx2, type2] = id2.split('-');
+      const isMatch = idx1 === idx2 && type1 !== type2;
+
+      if (isMatch) {
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        matches++;
+        updateScore(10);
+        resetTurn();
+
+        if (matches === pairs.length) {
+          messageDisplay.textContent = "🎉 All matched! Final Score: " + score;
+        }
+      } else {
+        updateScore(-5);
+        setTimeout(() => {
+          firstCard.classList.remove('flipped');
+          secondCard.classList.remove('flipped');
+          resetTurn();
+        }, 1000);
+      }
+    }
+
+    function updateScore(change) {
+      score += change;
+      if (score < 0) score = 0;
+      scoreDisplay.textContent = `Score: ${score}`;
+    }
+
+    function resetTurn() {
+      [firstCard, secondCard] = [null, null];
+      lockBoard = false;
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+  </script>
+
+</body>
+</html>

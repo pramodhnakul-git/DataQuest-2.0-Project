@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz 4 - Sustainable Development</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f1f8e9;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #33691e;
+      font-size: 28px;
+      margin-bottom: 20px;
+    }
+
+    #quiz, #wordle-section {
+      max-width: 700px;
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .question {
+      margin-bottom: 25px;
+      padding: 25px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .question p {
+      margin-bottom: 25px;
+      font-weight: bold;
+      font-size: 24px;
+      color: #1b5e20;
+    }
+
+    .option {
+      display: block;
+      margin: 15px auto;
+      padding: 15px 20px;
+      width: 85%;
+      max-width: 500px;
+      border: 2px solid #8bc34a;
+      border-radius: 10px;
+      background: #dcedc8;
+      color: #33691e;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option:hover {
+      background: #8bc34a;
+      color: white;
+    }
+
+    .option.selected {
+      background: #558b2f;
+      color: white;
+      border-color: #33691e;
+    }
+
+    button {
+      background: #558b2f;
+      border: none;
+      color: white;
+      padding: 14px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 20px;
+      margin-top: 20px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #33691e;
+    }
+    #wordle-section {
+      display: none;
+    }
+
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(5, 60px);
+      grid-gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .tile {
+      width: 60px;
+      height: 60px;
+      border: 2px solid #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      font-weight: bold;
+      text-transform: uppercase;
+      background: white;
+    }
+
+    .correct {
+      background: #4caf50;
+      color: white;
+    }
+    .present {
+      background: #ffeb3b;
+      color: black;
+    }
+    .absent {
+      background: #9e9e9e;
+      color: white;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #1b5e20;
+    }
+
+    #guessInput {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 18px;
+      text-transform: uppercase;
+      width: 150px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>🌍 Sustainable Development Quiz</h2>
+  <div id="quiz"></div>
+  <button id="nextBtn">Next</button>
+
+  <div id="wordle-section">
+    <h2>🟩 Wordle: Sustainable Development</h2>
+    <p>Guess the 5-letter word (6 tries)</p>
+    <div id="grid"></div>
+    <input type="text" id="guessInput" maxlength="5" placeholder="Enter word">
+    <button id="guessBtn">Guess</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const quizQuestions = [
+      {
+        q: "What does 'sustainable development' mean?",
+        options: [
+          "Meeting today’s needs without harming future generations",
+          "Using all natural resources quickly",
+          "Economic growth only",
+          "Technology without limits"
+        ],
+        answer: "Meeting today’s needs without harming future generations"
+      },
+      {
+        q: "Which of these is a Sustainable Development Goal (SDG)?",
+        options: ["No Poverty", "Unlimited Oil Use", "War Growth", "Plastic Expansion"],
+        answer: "No Poverty"
+      },
+      {
+        q: "Which of these practices supports sustainability?",
+        options: ["Deforestation", "Overfishing", "Recycling", "Pollution"],
+        answer: "Recycling"
+      },
+      {
+        q: "Which three pillars support sustainable development?",
+        options: [
+          "Economy, Society, Environment",
+          "Money, Factories, Technology",
+          "Oil, Gas, Coal",
+          "Government, Police, Army"
+        ],
+        answer: "Economy, Society, Environment"
+      },
+      {
+        q: "What is the main aim of renewable energy?",
+        options: [
+          "End fossil fuel use",
+          "Make air cleaner",
+          "Provide endless clean energy",
+          "All of the above"
+        ],
+        answer: "All of the above"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let quizScore = 0;
+    let selectedAnswer = null;
+    const quizDiv = document.getElementById("quiz");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function showQuestion(index) {
+      const qObj = quizQuestions[index];
+      quizDiv.innerHTML = `
+        <div class="question">
+          <p>${index + 1}. ${qObj.q}</p>
+          ${qObj.options.map(opt => `
+            <div class="option" data-value="${opt}">${opt}</div>
+          `).join("")}
+        </div>
+      `;
+      selectedAnswer = null;
+
+      document.querySelectorAll(".option").forEach(opt => {
+        opt.addEventListener("click", () => {
+          document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+          opt.classList.add("selected");
+          selectedAnswer = opt.dataset.value;
+        });
+      });
+
+      nextBtn.textContent = index === quizQuestions.length - 1 ? "Finish Quiz" : "Next";
+    }
+
+    showQuestion(currentQuestion);
+
+    nextBtn.addEventListener("click", () => {
+      if (!selectedAnswer) {
+        alert("Please select an answer.");
+        return;
+      }
+      if (selectedAnswer === quizQuestions[currentQuestion].answer) {
+        quizScore++;
+      }
+
+      currentQuestion++;
+      if (currentQuestion < quizQuestions.length) {
+        showQuestion(currentQuestion);
+      } else {
+        alert("You scored " + quizScore + " out of " + quizQuestions.length);
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("wordle-section").style.display = "block";
+        startWordle();
+      }
+    });
+
+    const words = ["GREEN", "EARTH", "SOLAR", "WATER", "PLANT"];
+    let targetWord = "";
+    let attempts = 0;
+
+    function startWordle() {
+      targetWord = words[Math.floor(Math.random() * words.length)];
+      console.log("Target word:", targetWord); 
+      attempts = 0;
+      document.getElementById("grid").innerHTML = "";
+      for (let i = 0; i < 30; i++) {
+        const tile = document.createElement("div");
+        tile.classList.add("tile");
+        document.getElementById("grid").appendChild(tile);
+      }
+    }
+
+    document.getElementById("guessBtn").addEventListener("click", () => {
+      const guessInput = document.getElementById("guessInput");
+      let guess = guessInput.value.toUpperCase();
+      if (guess.length !== 5) {
+        alert("Enter a 5-letter word!");
+        return;
+      }
+      if (attempts >= 6) return;
+
+      const startIndex = attempts * 5;
+      for (let i = 0; i < 5; i++) {
+        const tile = document.querySelectorAll(".tile")[startIndex + i];
+        tile.textContent = guess[i];
+        if (guess[i] === targetWord[i]) {
+          tile.classList.add("correct");
+        } else if (targetWord.includes(guess[i])) {
+          tile.classList.add("present");
+        } else {
+          tile.classList.add("absent");
+        }
+      }
+
+      attempts++;
+      guessInput.value = "";
+
+      if (guess === targetWord) {
+        document.getElementById("message").textContent = "🎉 You guessed it!";
+      } else if (attempts === 6) {
+        document.getElementById("message").textContent = "❌ Out of tries! The word was " + targetWord;
+      }
+    });
+  </script>
+
+</body>
+</html>

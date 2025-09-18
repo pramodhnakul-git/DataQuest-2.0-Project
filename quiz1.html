@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Environmental Awareness Quiz + Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #a8e063, #56ab2f);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .quiz-container {
+      background-color: #fff;
+      width: 100%;
+      max-width: 700px;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.6s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      text-align: center;
+      color: #2e8b57;
+      margin-bottom: 30px;
+    }
+
+    .question, .game-question {
+      display: none;
+    }
+
+    .question.active, .game-question.active {
+      display: block;
+    }
+
+    .question h3 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    .options label {
+      display: block;
+      background-color: #f0f0f0;
+      border-radius: 6px;
+      padding: 10px 15px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .options input[type="radio"] {
+      margin-right: 10px;
+    }
+
+    .options label:hover {
+      background-color: #d0f0c0;
+    }
+
+    button {
+      padding: 12px 25px;
+      background-color: #2e8b57;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: block;
+      margin: 20px auto 0;
+    }
+
+    button:hover {
+      background-color: #256d46;
+    }
+
+    #result {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #2e8b57;
+    }
+
+    #game-area {
+      width: 100%;
+      height: 400px;
+      background: #f5fff9;
+      border: 2px solid #2e8b57;
+      position: relative;
+      overflow: hidden;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+
+    .item {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      top: 0;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .bin {
+      width: 80px;
+      height: 80px;
+      position: absolute;
+      bottom: 10px;
+      text-align: center;
+      line-height: 80px;
+      font-weight: bold;
+      font-size: 14px;
+      border: 3px solid #2e8b57;
+      border-radius: 8px;
+      background: #ccc;
+      cursor: grab;
+    }
+
+    #recycle-bin {
+      background: #d0f0c0;
+      left: 100px;
+    }
+
+    #trash-bin {
+      background: #fdd;
+      left: 300px;
+    }
+
+    #game-over {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 30px;
+      font-weight: bold;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      color: #2e8b57;
+    }
+
+    #score {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h2>🌱 Environmental Awareness Quiz + Game</h2>
+  <form id="quizForm">
+
+    <div class="question active">
+      <h3>1. What is climate change?</h3>
+      <div class="options">
+        <label><input type="radio" name="q1" value="A"> Natural cooling of the Earth</label>
+        <label><input type="radio" name="q1" value="B"> Long-term changes in global temperatures and weather patterns</label>
+        <label><input type="radio" name="q1" value="C"> A one-day weather event</label>
+        <label><input type="radio" name="q1" value="D"> Melting of glaciers only</label>
+      </div>
+    </div>
+
+   
+    <div class="question">
+      <h3>2. Which gas contributes most to global warming?</h3>
+      <div class="options">
+        <label><input type="radio" name="q2" value="A"> Nitrogen</label>
+        <label><input type="radio" name="q2" value="B"> Oxygen</label>
+        <label><input type="radio" name="q2" value="C"> Carbon dioxide (CO₂)</label>
+        <label><input type="radio" name="q2" value="D"> Hydrogen</label>
+      </div>
+    </div>
+    <div class="question">
+      <h3>3. What human activity contributes most to climate change?</h3>
+      <div class="options">
+        <label><input type="radio" name="q3" value="A"> Planting trees</label>
+        <label><input type="radio" name="q3" value="B"> Burning fossil fuels</label>
+        <label><input type="radio" name="q3" value="C"> Drinking bottled water</label>
+        <label><input type="radio" name="q3" value="D"> Riding bicycles</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>4. Which renewable energy comes from the sun?</h3>
+      <div class="options">
+        <label><input type="radio" name="q4" value="A"> Wind energy</label>
+        <label><input type="radio" name="q4" value="B"> Hydro energy</label>
+        <label><input type="radio" name="q4" value="C"> Solar energy</label>
+        <label><input type="radio" name="q4" value="D"> Geothermal energy</label>
+      </div>
+    </div>
+
+    <div class="question">
+      <h3>5. What does "sustainable" mean?</h3>
+      <div class="options">
+        <label><input type="radio" name="q5" value="A"> Using resources endlessly</label>
+        <label><input type="radio" name="q5" value="B"> Using resources without depleting them</label>
+        <label><input type="radio" name="q5" value="C"> Stopping all energy use</label>
+        <label><input type="radio" name="q5" value="D"> Only using technology</label>
+      </div>
+    </div>
+
+    <div class="game-question">
+      <h3>🎮 Game Time! Catch the correct waste in the right bin!</h3>
+      <p>Drag the bins and sort falling items. Reach 50 points to finish the quiz!</p>
+      <div id="game-area">
+        <div id="recycle-bin" class="bin">Recycle</div>
+        <div id="trash-bin" class="bin">Trash</div>
+        <div id="game-over">✅ Game Done!</div>
+      </div>
+      <div id="score">Score: 0</div>
+    </div>
+
+    <button type="button" id="nextBtn">Next</button>
+  </form>
+
+  <div id="result"></div>
+</div>
+
+<script>
+  const correctAnswers = {
+    q1: "B",
+    q2: "C",
+    q3: "B",
+    q4: "C",
+    q5: "B"
+  };
+
+  const questions = document.querySelectorAll(".question, .game-question");
+  const nextBtn = document.getElementById("nextBtn");
+  const resultDiv = document.getElementById("result");
+  let currentQuestion = 0;
+  let gameScore = 0;
+  let gameRunning = false;
+  const items = [
+    { emoji: "🧴", type: "recycle" },
+    { emoji: "🍌", type: "trash" },
+    { emoji: "📰", type: "recycle" },
+    { emoji: "🍗", type: "trash" },
+    { emoji: "🧃", type: "recycle" },
+    { emoji: "🍟", type: "trash" }
+  ];
+
+  const gameArea = document.getElementById('game-area');
+  const recycleBin = document.getElementById('recycle-bin');
+  const trashBin = document.getElementById('trash-bin');
+  const scoreDisplay = document.getElementById('score');
+  const gameOverDisplay = document.getElementById('game-over');
+  const spawnIntervals = new Set();
+
+  nextBtn.addEventListener("click", () => {
+    const current = questions[currentQuestion];
+
+    if (current.classList.contains("question")) {
+      const name = `q${currentQuestion + 1}`;
+      const selected = document.querySelector(`input[name="${name}"]:checked`);
+      if (!selected) {
+        alert("Please select an answer before continuing.");
+        return;
+      }
+    }
+
+    current.classList.remove("active");
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+      const next = questions[currentQuestion];
+      next.classList.add("active");
+
+      if (next.classList.contains("game-question")) {
+        startGame();
+      }
+    } else {
+      showResult();
+    }
+  });
+
+  function showResult() {
+    let score = 0;
+    for (let key in correctAnswers) {
+      const selected = document.querySelector(`input[name="${key}"]:checked`);
+      if (selected && selected.value === correctAnswers[key]) {
+        score++;
+      }
+    }
+
+    document.getElementById("quizForm").style.display = "none";
+    resultDiv.textContent = `🎉 You completed the quiz! Score: ${score} / 5`;
+  }
+
+  function getRandomItem() {
+    return items[Math.floor(Math.random() * items.length)];
+  }
+
+  function spawnItem() {
+    if (!gameRunning) return;
+    const data = getRandomItem();
+    const item = document.createElement("div");
+    item.classList.add("item");
+    item.textContent = data.emoji;
+    item.dataset.type = data.type;
+    item.style.left = `${Math.random() * (gameArea.clientWidth - 40)}px`;
+    gameArea.appendChild(item);
+    fall(item);
+  }
+
+  function fall(item) {
+    let top = 0;
+    const interval = setInterval(() => {
+      if (!gameRunning) {
+        clearInterval(interval);
+        item.remove();
+        return;
+      }
+
+      top += 3;
+      item.style.top = `${top}px`;
+
+      const itemRect = item.getBoundingClientRect();
+      const recycleRect = recycleBin.getBoundingClientRect();
+      const trashRect = trashBin.getBoundingClientRect();
+
+      if (itemRect.bottom >= recycleRect.top) {
+        const centerX = itemRect.left + itemRect.width / 2;
+        const inRecycle = centerX >= recycleRect.left && centerX <= recycleRect.right;
+        const inTrash = centerX >= trashRect.left && centerX <= trashRect.right;
+
+        if (inRecycle || inTrash) {
+          const correct =
+            (inRecycle && item.dataset.type === "recycle") ||
+            (inTrash && item.dataset.type === "trash");
+
+          if (correct) {
+            gameScore += 10;
+          } else {
+            gameScore -= 5;
+          }
+
+          scoreDisplay.textContent = `Score: ${gameScore}`;
+          item.remove();
+          clearInterval(interval);
+          spawnIntervals.delete(interval);
+
+          if (gameScore >= 50) {
+            endGame();
+          }
+        }
+      }
+
+      if (top >= gameArea.clientHeight) {
+        clearInterval(interval);
+        spawnIntervals.delete(interval);
+        item.remove();
+      }
+    }, 20);
+
+    spawnIntervals.add(interval);
+  }
+
+  function startGame() {
+    gameRunning = true;
+    gameScore = 0;
+    scoreDisplay.textContent = "Score: 0";
+    gameOverDisplay.style.display = "none";
+
+    const spawnInterval = setInterval(() => {
+      if (gameRunning) spawnItem();
+    }, 1500);
+
+    spawnIntervals.add(spawnInterval);
+  }
+
+  function endGame() {
+    gameRunning = false;
+    spawnIntervals.forEach(clearInterval);
+    spawnIntervals.clear();
+
+    document.querySelectorAll(".item").forEach(el => el.remove());
+    gameOverDisplay.style.display = "block";
+
+    setTimeout(() => {
+      nextBtn.click();
+    }, 2000);
+  }
+
+  function makeDraggable(bin) {
+    let offsetX = 0;
+    let isDragging = false;
+
+    bin.addEventListener("pointerdown", (e) => {
+      isDragging = true;
+      offsetX = e.clientX - bin.getBoundingClientRect().left;
+      bin.setPointerCapture(e.pointerId);
+      bin.style.cursor = 'grabbing';
+    });
+
+    bin.addEventListener("pointermove", (e) => {
+      if (!isDragging) return;
+      const gameRect = gameArea.getBoundingClientRect();
+      let newLeft = e.clientX - gameRect.left - offsetX;
+
+      if (newLeft < 0) newLeft = 0;
+      if (newLeft > gameArea.clientWidth - bin.clientWidth) {
+        newLeft = gameArea.clientWidth - bin.clientWidth;
+      }
+
+      bin.style.left = `${newLeft}px`;
+    });
+
+    bin.addEventListener("pointerup", (e) => {
+      isDragging = false;
+      bin.releasePointerCapture(e.pointerId);
+      bin.style.cursor = 'grab';
+    });
+
+    bin.addEventListener("pointercancel", () => {
+      isDragging = false;
+      bin.style.cursor = 'grab';
+    });
+  }
+
+  makeDraggable(recycleBin);
+  makeDraggable(trashBin);
+</script>
+</body>
+</html>

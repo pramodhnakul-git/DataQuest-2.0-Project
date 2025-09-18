@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Renewable Energy Quiz & Matching Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      color: #00695c;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+
+    #quiz, #game-section {
+      max-width: 700px;
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .question {
+      margin-bottom: 25px;
+      padding: 25px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .question p {
+      margin-bottom: 25px;
+      font-weight: bold;
+      font-size: 24px;
+      color: #004d40;
+    }
+
+    .option {
+      display: block;
+      margin: 15px auto;
+      padding: 15px 20px;
+      width: 85%;
+      max-width: 500px;
+      border: 2px solid #4db6ac;
+      border-radius: 10px;
+      background: #e0f2f1;
+      color: #004d40;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .option:hover {
+      background: #4db6ac;
+      color: white;
+    }
+
+    .option.selected {
+      background: #00897b;
+      color: white;
+      border-color: #00695c;
+    }
+
+    button {
+      background: #00897b;
+      border: none;
+      color: white;
+      padding: 14px 22px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 20px;
+      margin-top: 20px;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #00695c;
+    }
+    #game-section {
+      display: none;
+      text-align: center;
+    }
+
+    #gameCanvas {
+      border: 2px solid #004d40;
+      border-radius: 10px;
+      background: #ffffff;
+      margin-top: 20px;
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 20px;
+      color: #004d40;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>⚡ Renewable Energy Quiz</h2>
+  <div id="quiz"></div>
+  <button id="nextBtn">Next</button>
+
+  <div id="game-section">
+    <h2>🔌 Match the Renewable Energy Terms</h2>
+    <canvas id="gameCanvas" width="800" height="500"></canvas>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const quizQuestions = [
+      {
+        q: "Which energy source comes from sunlight?",
+        options: ["Wind", "Solar", "Geothermal", "Hydropower"],
+        answer: "Solar"
+      },
+      {
+        q: "Which renewable energy uses moving air?",
+        options: ["Solar", "Nuclear", "Wind", "Coal"],
+        answer: "Wind"
+      },
+      {
+        q: "Hydropower is generated using:",
+        options: ["Mountains", "Water flow", "Oil", "Natural gas"],
+        answer: "Water flow"
+      },
+      {
+        q: "Geothermal energy comes from:",
+        options: ["Earth’s heat", "Rain", "Ocean waves", "Trees"],
+        answer: "Earth’s heat"
+      },
+      {
+        q: "Which renewable source uses organic material?",
+        options: ["Biomass", "Solar", "Nuclear", "Natural gas"],
+        answer: "Biomass"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let quizScore = 0;
+    let selectedAnswer = null;
+    const quizDiv = document.getElementById("quiz");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function showQuestion(index) {
+      const qObj = quizQuestions[index];
+      quizDiv.innerHTML = `
+        <div class="question">
+          <p>${index + 1}. ${qObj.q}</p>
+          ${qObj.options.map(opt => `
+            <div class="option" data-value="${opt}">${opt}</div>
+          `).join("")}
+        </div>
+      `;
+      selectedAnswer = null;
+
+      document.querySelectorAll(".option").forEach(opt => {
+        opt.addEventListener("click", () => {
+          document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+          opt.classList.add("selected");
+          selectedAnswer = opt.dataset.value;
+        });
+      });
+
+      nextBtn.textContent = index === quizQuestions.length - 1 ? "Finish Quiz" : "Next";
+    }
+
+    showQuestion(currentQuestion);
+
+    nextBtn.addEventListener("click", () => {
+      if (!selectedAnswer) {
+        alert("Please select an answer.");
+        return;
+      }
+      if (selectedAnswer === quizQuestions[currentQuestion].answer) {
+        quizScore++;
+      }
+
+      currentQuestion++;
+      if (currentQuestion < quizQuestions.length) {
+        showQuestion(currentQuestion);
+      } else {
+        alert("You scored " + quizScore + " out of " + quizQuestions.length);
+        document.getElementById("quiz").style.display = "none";
+        document.getElementById("nextBtn").style.display = "none";
+        document.getElementById("game-section").style.display = "block";
+        startGame();
+      }
+    });
+
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const messageDisplay = document.getElementById("message");
+
+    const terms = ["Solar", "Wind", "Hydropower", "Geothermal", "Biomass"];
+    const definitions = [
+      "Sunlight energy",
+      "Moving air energy",
+      "Energy from flowing water",
+      "Heat from inside Earth",
+      "Organic material energy"
+    ];
+
+    function shuffle(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+    const shuffledDefs = shuffle([...definitions]);
+
+    const colors = ["red", "blue", "green", "orange", "purple"];
+    let leftPoints = [];
+    let rightPoints = [];
+    let connections = [];
+    let dragging = null;
+
+    function startGame() {
+      leftPoints = terms.map((t, i) => ({
+        x: 100, y: 80 + i * 80, text: t, matched: false, color: colors[i]
+      }));
+      rightPoints = shuffledDefs.map((d, i) => ({
+        x: 700, y: 80 + i * 80, text: d, matched: false
+      }));
+      connections = [];
+      draw();
+      canvas.addEventListener("mousedown", startDrag);
+      canvas.addEventListener("mousemove", dragLine);
+      canvas.addEventListener("mouseup", endDrag);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = "18px Arial";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      leftPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "black";
+        ctx.fillText(p.text, p.x, p.y - 35);
+      });
+      rightPoints.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 20, 0, Math.PI * 2);
+        ctx.fillStyle = "#80cbc4";
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = "black";
+        ctx.fillText(p.text, p.x, p.y - 35);
+      });
+      connections.forEach(c => {
+        ctx.strokeStyle = c.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(c.from.x, c.from.y);
+        ctx.lineTo(c.to.x, c.to.y);
+        ctx.stroke();
+      });
+      if (dragging) {
+        ctx.strokeStyle = dragging.from.color;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(dragging.from.x, dragging.from.y);
+        ctx.lineTo(dragging.x, dragging.y);
+        ctx.stroke();
+      }
+    }
+
+    function startDrag(e) {
+      const pos = getMousePos(e);
+      leftPoints.forEach(p => {
+        if (distance(pos, p) < 20 && !p.matched) {
+          dragging = { from: p, x: pos.x, y: pos.y };
+        }
+      });
+    }
+
+    function dragLine(e) {
+      if (dragging) {
+        const pos = getMousePos(e);
+        dragging.x = pos.x;
+        dragging.y = pos.y;
+        draw();
+      }
+    }
+
+    function endDrag(e) {
+      if (!dragging) return;
+      const pos = getMousePos(e);
+
+      rightPoints.forEach((p, i) => {
+        if (distance(pos, p) < 20 && !p.matched) {
+          const leftIndex = leftPoints.indexOf(dragging.from);
+          const correctDef = definitions[leftIndex];
+          if (p.text === correctDef) { 
+            connections.push({ from: dragging.from, to: p, color: dragging.from.color });
+            dragging.from.matched = true;
+            p.matched = true;
+            if (connections.length === terms.length) {
+              messageDisplay.textContent = "🎉 All connections matched!";
+            }
+          }
+        }
+      });
+
+      dragging = null;
+      draw();
+    }
+
+    function getMousePos(evt) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+      };
+    }
+
+    function distance(a, b) {
+      return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+    }
+  </script>
+
+</body>
+</html>
